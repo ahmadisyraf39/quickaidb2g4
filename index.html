@@ -14,8 +14,8 @@
     </form>
     
     <script>
+    // No function key needed for Anonymous access
     const FUNCTION_URL = 'https://b2g4-quickaid-api.azurewebsites.net/api/submit_ticket';
-    const FUNCTION_KEY = 'Z-2arRuybPjy4sm8z4hugijYtO55kX18RUyedwrIuhyyAzFuXulfYw=='; 
 
     document.getElementById('ticketForm').onsubmit = async (e) => {
         e.preventDefault();
@@ -25,25 +25,29 @@
             title: document.getElementById('title').value,
             category: document.getElementById('category').value,
             description: document.getElementById('description').value,
-            sourceUrl: window.location.href // Include current URL
+            sourceUrl: window.location.href
         };
 
-        const response = await fetch(`${FUNCTION_URL}?code=${FUNCTION_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(ticket)
-        });
+        try {
+            const response = await fetch(FUNCTION_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ticket)
+            });
 
-        if (!response.ok) {
-            const err = await response.text();
-            alert('Error submitting ticket: ' + response.status + ' - ' + err);
-            return;
+            if (!response.ok) {
+                const err = await response.text();
+                alert('Error submitting ticket: ' + response.status + ' - ' + err);
+                return;
+            }
+
+            const result = await response.json();
+            alert('Ticket ID: ' + result.id);
+        } catch (error) {
+            alert('Network error: ' + error.message);
         }
-
-        const result = await response.json();
-        alert('Ticket ID: ' + result.id);
     };
-</script>
+    </script>
 
 </body>
 </html>
