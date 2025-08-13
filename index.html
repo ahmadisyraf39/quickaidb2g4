@@ -12,36 +12,38 @@
         <label>Description:<br><textarea id="description" required></textarea></label><br>
         <button type="submit">Submit</button>
     </form>
+    
     <script>
-        const backendBaseUrl = "https://b2g4-quickaid-api.azurewebsites.net";
+    const FUNCTION_URL = 'https://b2g4-quickaid-api.azurewebsites.net/api/submit_ticket';
+    const FUNCTION_KEY = 'JscMwF3BNLVC9xoY6E1TOu2oopGP2_IM5OwoNzaURY-_AzFuFaJWbg=='; 
 
-        document.getElementById('ticketForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const ticket = {
-                email: document.getElementById('email').value,
-                title: document.getElementById('title').value,
-                category: document.getElementById('category').value,
-                description: document.getElementById('description').value
-            };
+    document.getElementById('ticketForm').onsubmit = async (e) => {
+        e.preventDefault();
 
-            try {
-                const response = await fetch(`${backendBaseUrl}/api/submit_ticket`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(ticket)
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
-                }
-
-                const result = await response.json();
-                alert('Ticket ID: ' + result.id);
-            } catch (err) {
-                alert('Error submitting ticket: ' + err.message);
-            }
+        const ticket = {
+            email: document.getElementById('email').value,
+            title: document.getElementById('title').value,
+            category: document.getElementById('category').value,
+            description: document.getElementById('description').value,
+            sourceUrl: window.location.href // Include current URL
         };
-    </script>
+
+        const response = await fetch(`${FUNCTION_URL}?code=${FUNCTION_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(ticket)
+        });
+
+        if (!response.ok) {
+            const err = await response.text();
+            alert('Error submitting ticket: ' + response.status + ' - ' + err);
+            return;
+        }
+
+        const result = await response.json();
+        alert('Ticket ID: ' + result.id);
+    };
+</script>
+
 </body>
 </html>
