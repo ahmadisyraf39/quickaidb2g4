@@ -13,6 +13,8 @@
         <button type="submit">Submit</button>
     </form>
     <script>
+        const backendBaseUrl = "https://b2g4-quickaid-api.azurewebsites.net";
+
         document.getElementById('ticketForm').onsubmit = async (e) => {
             e.preventDefault();
             const ticket = {
@@ -21,13 +23,24 @@
                 category: document.getElementById('category').value,
                 description: document.getElementById('description').value
             };
-            const response = await fetch('/api/submit_ticket', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(ticket)
-            });
-            const result = await response.json();
-            alert('Ticket ID: ' + result.id);
+
+            try {
+                const response = await fetch(`${backendBaseUrl}/api/submit_ticket`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(ticket)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const result = await response.json();
+                alert('Ticket ID: ' + result.id);
+            } catch (err) {
+                alert('Error submitting ticket: ' + err.message);
+            }
         };
     </script>
 </body>
