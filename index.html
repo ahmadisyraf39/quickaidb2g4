@@ -6,7 +6,7 @@
 <body>
     <h1>Submit a Helpdesk Ticket</h1>
     <form id="ticketForm">
-        <label>Emailll: <input type="email" id="email" required></label><br>
+        <label>Email: <input type="email" id="email" required></label><br>
         <label>Title: <input type="text" id="title" required></label><br>
         <label>Category: <input type="text" id="category" required></label><br>
         <label>Description:<br><textarea id="description" required></textarea></label><br>
@@ -15,7 +15,7 @@
     
     <script>
     // No function key needed for Anonymous access
-    const FUNCTION_URL = 'https://b2g4-quickaid-api.azurewebsites.net/api/submit_ticket?code=GDPdifuQCH_yHnm70oQebZwmzLfl2baMwdO8sRaFArK3AzFu62ZTpA==';
+    const FUNCTION_URL = 'https://b2g4quickaidapi1.azurewebsites.net/api/submit_ticket?code=OPAQmB1krSGqqQTOq-1zjK2dHK9YSPKfbyOTJtX7Oz1eAzFubw3Veg==';
 
     document.getElementById('ticketForm').onsubmit = async (e) => {
         e.preventDefault();
