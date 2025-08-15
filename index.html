@@ -171,11 +171,21 @@
         <div class="tab-pane fade" id="view">
           <form id="viewForm" class="card p-4 shadow-sm bg-white fade-in">
             <div class="mb-3">
-              <label for="ticketId" class="form-label"
-                >Enter Your Ticket ID</label
+              <label for="ticketIdOrEmail" class="form-label"
+                >Enter Ticket ID or Email</label
               >
-              <input type="text" id="ticketId" class="form-control" required />
+              <input
+                type="text"
+                id="ticketIdOrEmail"
+                class="form-control"
+                required
+              />
+              <small class="text-muted"
+                >You can enter either the Ticket ID or your email
+                address.</small
+              >
             </div>
+
             <button type="submit" class="btn btn-secondary">View Ticket</button>
             <div id="viewLoading" class="mt-3" style="display: none">
               <div class="spinner-border text-success" role="status"></div>
@@ -240,44 +250,53 @@
       document.getElementById("viewForm").onsubmit = async (e) => {
         e.preventDefault();
         document.getElementById("viewLoading").style.display = "block";
-        const id = document.getElementById("ticketId").value.trim();
+        const input = document.getElementById("ticketIdOrEmail").value.trim();
+
+        // Decide if it's an email or ID
+        let paramName = input.includes("@") ? "email" : "id";
 
         try {
           const response = await fetch(
-            `${GET_TICKETS_URL}&id=${encodeURIComponent(id)}`
+            `${GET_TICKETS_URL}&${paramName}=${encodeURIComponent(input)}`
           );
 
           if (!response.ok) throw new Error(await response.text());
 
-          const ticket = await response.json();
+          const tickets = await response.json();
 
-          if (!ticket || (Array.isArray(ticket) && ticket.length === 0)) {
+          if (!tickets || (Array.isArray(tickets) && tickets.length === 0)) {
             document.getElementById(
               "ticketsList"
             ).innerHTML = `<div class="alert alert-warning fade-in">
-           ⚠ No ticket found with this ID.
-         </div>`;
+        ⚠ No tickets found for this ${paramName}.
+      </div>`;
             return;
           }
 
-          const t = Array.isArray(ticket) ? ticket[0] : ticket; // handle array or object
+          const ticketArray = Array.isArray(tickets) ? tickets : [tickets];
+          const html = ticketArray
+            .map(
+              (t) => `
+        <div class="list-group-item">
+          <h5>${t.title} <span class="badge bg-info">${
+                t.status || "Pending"
+              }</span></h5>
+          <small>Category: ${t.category} | ID: ${t.id}</small>
+          <p>${t.description}</p>
+        </div>
+      `
+            )
+            .join("");
+
           document.getElementById(
             "ticketsList"
-          ).innerHTML = `<div class="list-group fade-in">
-         <div class="list-group-item">
-           <h5>${t.title} <span class="badge bg-info">${
-            t.status || "Pending"
-          }</span></h5>
-           <small>Category: ${t.category} | ID: ${t.id}</small>
-           <p>${t.description}</p>
-         </div>
-       </div>`;
+          ).innerHTML = `<div class="list-group fade-in">${html}</div>`;
         } catch (err) {
           document.getElementById(
             "ticketsList"
           ).innerHTML = `<div class="alert alert-danger fade-in">
-         ❌ Error retrieving ticket: ${err.message}
-       </div>`;
+      ❌ Error retrieving ticket: ${err.message}
+    </div>`;
         } finally {
           document.getElementById("viewLoading").style.display = "none";
         }
