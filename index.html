@@ -277,20 +277,27 @@
           const html = ticketArray
             .map(
               (t) => `
-        <div class="list-group-item">
-          <h5>${t.title} <span class="badge bg-info">${
-                t.status || "Pending"
-              }</span></h5>
-          <small>Category: ${t.category} | ID: ${t.id}</small>
-          <p>${t.description}</p>
-        </div>
-      `
+      <div class="list-group-item py-3">
+        <h5 class="fw-bold mb-1">
+          ${t.title} 
+          <span class="badge bg-info">${t.status || "Pending"}</span>
+        </h5>
+        <small class="text-muted d-block mb-2">
+          <strong>ID:</strong> ${t.id} |
+          <strong>Email:</strong> ${t.email || "N/A"} |
+          <strong>Category:</strong> ${t.category}
+        </small>
+        <p class="mb-0">${t.description}</p>
+      </div>
+    `
             )
             .join("");
 
-          document.getElementById(
-            "ticketsList"
-          ).innerHTML = `<div class="list-group fade-in">${html}</div>`;
+          document.getElementById("ticketsList").innerHTML = `
+  <div class="list-group fade-in">
+    ${html}
+  </div>
+`;
         } catch (err) {
           document.getElementById(
             "ticketsList"
