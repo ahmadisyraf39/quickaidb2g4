@@ -147,7 +147,14 @@
             </div>
             <div class="mb-3">
               <label for="category" class="form-label">Category</label>
-              <input type="text" id="category" class="form-control" required />
+              <select id="category" class="form-select" required>
+                <option value="">-- Select a category --</option>
+                <option value="Technical Issue">Technical Issue</option>
+                <option value="Service Request">Service Request</option>
+                <option value="Incident Report">Incident Report</option>
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Others">Others</option>
+              </select>
             </div>
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
